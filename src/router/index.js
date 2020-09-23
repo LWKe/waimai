@@ -4,6 +4,7 @@ import Msite from '../views/Miste/Miste.vue'
 import Order from '../views/Order/Order.vue'
 import Profile from '../views/Profile/Profile.vue'
 import Search from '../views/Search/Search.vue'
+import Login from '../views/Login/Login.vue'
 Vue.use(VueRouter)
 
 // 组建规则
@@ -12,7 +13,8 @@ const routes = [
   { path: '/miste', component: Msite },
   { path: '/order', component: Order },
   { path: '/profile', component: Profile },
-  { path: '/search', component: Search }
+  { path: '/search', component: Search },
+  { path: '/login', component: Login }
 ]
 
 const router = new VueRouter({

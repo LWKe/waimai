@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <!-- 组件渲染 -->
-    阿斯顿发现阿斯顿发生
     <Footernav />
   </div>
 </template>

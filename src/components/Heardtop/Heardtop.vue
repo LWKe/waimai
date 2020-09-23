@@ -3,7 +3,7 @@
   <!--首页头部-->
 
   <header class="msite_header">
-    <router-view></router-view>
+    <!-- <router-view></router-view> -->
     <slot name="left"></slot>
     <span class="header_title">
       <span class="header_title_text ellipsis">{{title}}</span>
