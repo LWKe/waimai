@@ -3,31 +3,100 @@
   <div>
     <section class="search">
       <HeardTop title="搜索"></HeardTop>
-      <!-- <header class="header">
-        <a class="header_title">
-          <span class="header_title_text">搜索</span>
-        </a>
-      </header>-->
-      <form class="search_form" action="#">
-        <input type="search" name="search" placeholder="请输入商家或美食名称" class="search_input" />
-        <input type="submit" name="submit" class="search_submit" />
+      <form class="search_form" @submit.prevent="search">
+        <input
+          type="search"
+          name="search"
+          placeholder="请输入商家或美食名称"
+          class="search_input"
+          v-model="keyword"
+        />
+        <input
+          type="submit"
+          name="submit"
+          class="search_submit"
+          @click="search"
+        />
       </form>
+      <section class="list" v-if="!noSearchShops">
+        <ul class="list_container">
+          <!--:to="'/shop?id='+item.id"-->
+          <router-link
+            :to="{ path: '/shop', query: { id: item.id } }"
+            tag="li"
+            v-for="item in searchShops"
+            :key="item.id"
+            class="list_li"
+          >
+            <section class="item_left">
+              <img :src="imgBaseUrl + item.image_path" class="restaurant_img" />
+            </section>
+            <section class="item_right">
+              <div class="item_right_text">
+                <p>
+                  <span>{{ item.name }}</span>
+                </p>
+                <p>月售 {{ item.month_sales || item.recent_order_num }} 单</p>
+                <p>
+                  {{ item.delivery_fee || item.float_minimum_order_amount }}
+                  元起送 / 距离{{ item.distance }}
+                </p>
+              </div>
+            </section>
+          </router-link>
+        </ul>
+      </section>
+      <div class="search_none" v-else>很抱歉！无搜索结果</div>
     </section>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import HeardTop from "@/components/Heardtop/Heardtop";
 export default {
+  data() {
+    return {
+      keyword: "",
+      imgBaseUrl: "http://cangdu.org:8001/img/",
+      noSearchShops: false,
+    };
+  },
+  computed: {
+    ...mapState(["searchShops"]),
+  },
   components: { HeardTop },
+  methods: {
+    search() {
+      // 得到搜索关键字
+      const keyword = this.keyword.trim();
+      // 进行搜索
+      if (keyword) {
+        this.$store.dispatch("searchShops", keyword);
+      }
+    },
+  },
+  watch: {
+    searchShops(value) {
+      if (!value.length) {
+        // 没有数据
+        this.noSearchShops = true;
+      } else {
+        // 有数据
+        this.noSearchShops = false;
+      }
+    },
+  },
 };
 </script>
 
 <style scoped lang='stylus'>
 @import '../../assets/stylus/mixins.styl';
 
-&.search { // 搜索
+.search {
   width: 100%;
+  height: 100%;
+  overflow: hidden;
 
   .search_form {
     clearFix();
@@ -54,12 +123,59 @@ export default {
       &.search_submit {
         float: right;
         width: 18%;
-        border: 4px solid $dColor;
+        border: 4px solid #0085ff;
         font-size: 16px;
         color: #fff;
-        background-color: $dColor;
+        background-color: #0085ff;
       }
     }
+  }
+
+  .list {
+    .list_container {
+      background-color: #fff;
+
+      .list_li {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        border-bottom: 1px solid $bc;
+
+        .item_left {
+          margin-right: 10px;
+
+          .restaurant_img {
+            width: 50px;
+            height: 50px;
+            display: block;
+          }
+        }
+
+        .item_right {
+          font-size: 12px;
+          flex: 1;
+
+          .item_right_text {
+            p {
+              line-height: 12px;
+              margin-bottom: 6px;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .search_none {
+    margin: 0 auto;
+    color: #333;
+    background-color: #fff;
+    text-align: center;
+    margin-top: 0.125rem;
   }
 }
 </style>
